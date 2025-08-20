@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>刊登系统预发布拦截数据管理</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+        
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        .breadcrumb-item a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+        }
+        
+        .breadcrumb-item.active {
+            color: white;
+        }
+        
+        .main-content {
+            padding: 2rem 0;
+        }
+        
+        .filter-section {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .filter-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+            border-left: 4px solid #007bff;
+            padding-left: 12px;
+        }
+        
+        .form-control, .form-select {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9rem;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            border: none;
+            border-radius: 4px;
+            padding: 0.5rem 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .btn-outline-secondary {
+            border-color: #6c757d;
+            color: #6c757d;
+            border-radius: 4px;
+            padding: 0.5rem 1.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .data-section {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .data-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .data-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .data-stats {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .table-responsive {
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .table {
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+        
+        .table th {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            font-weight: 600;
+            color: #495057;
+            padding: 0.75rem;
+            white-space: nowrap;
+        }
+        
+        .table td {
+            padding: 0.75rem;
+            vertical-align: middle;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-danger {
+            background-color: #ffeaea;
+            color: #dc3545;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .status-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .btn-sm {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.8rem;
+            border-radius: 3px;
+            margin-right: 0.25rem;
+        }
+        
+        .btn-outline-primary {
+            border-color: #007bff;
+            color: #007bff;
+        }
+        
+        .btn-outline-danger {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+        
+        .pagination {
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+        
+        .pagination .page-link {
+            border-color: #dee2e6;
+            color: #6c757d;
+            padding: 0.5rem 0.75rem;
+        }
+        
+        .pagination .page-item.active .page-link {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            border-color: #007bff;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        @media (max-width: 768px) {
+            .filter-section .row > div {
+                margin-bottom: 1rem;
+            }
+            
+            .data-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .table-responsive {
+                font-size: 0.8rem;
+            }
+            
+            .btn-group {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+        }
+        
+        .modal-header .btn-close {
+            filter: invert(1);
+        }
+        
+        .detail-item {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.25rem;
+        }
+        
+        .detail-value {
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <div class="header">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1><i class="fas fa-shield-alt me-2"></i>刊登系统预发布拦截数据管理</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i> 首页</a></li>
+                            <li class="breadcrumb-item"><a href="#">刊登系统</a></li>
+                            <li class="breadcrumb-item active">拦截数据管理</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="text-end">
+                    <span class="me-3"><i class="fas fa-user"></i> 管理员</span>
+                    <small>最后更新：2025-07-24 11:53</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <div class="container-fluid">
+            <!-- 筛选条件区域 -->
+            <div class="filter-section">
+                <div class="filter-title">
+                    <i class="fas fa-filter me-2"></i>筛选条件
+                </div>
+                <form>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">店铺</label>
+                            <select class="form-select" multiple>
+                                <option value="">全部店铺</option>
+                                <option value="store1">Amazon-US-Store001</option>
+                                <option value="store2">Amazon-UK-Store002</option>
+                                <option value="store3">Amazon-DE-Store003</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">站点</label>
+                            <select class="form-select" multiple>
+                                <option value="">全部站点</option>
+                                <option value="US">美国(US)</option>
+                                <option value="UK">英国(UK)</option>
+                                <option value="DE">德国(DE)</option>
+                                <option value="FR">法国(FR)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">SPU</label>
+                            <input type="text" class="form-control" placeholder="输入SPU编码，多个用逗号分隔">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">拦截类型</label>
+                            <select class="form-select" multiple>
+                                <option value="">全部类型</option>
+                                <option value="brand">关键词中存在品牌词</option>
+                                <option value="config">产品不满足店铺配置限制</option>
+                                <option value="formula">无匹配交易公式</option>
+                                <option value="keyword">关键词缺失</option>
+                                <option value="image">图片问题</option>
+                                <option value="infringement">侵权禁售</option>
+                                <option value="duplicate">重复刊登</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">处理状态</label>
+                            <select class="form-select">
+                                <option value="">全部状态</option>
+                                <option value="pending">未拦截</option>
+                                <option value="blocked">已拦截</option>
+                                <option value="passed">无需拦截</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">创建时间</label>
+                            <input type="date" class="form-control" value="2025-07-17">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">至</label>
+                            <input type="date" class="form-control" value="2025-07-24">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">&nbsp;</label>
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-primary">
+                                    <i class="fas fa-search me-1"></i>查询
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary">
+                                    <i class="fas fa-redo me-1"></i>重置
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 数据列表区域 -->
+            <div class="data-section">
+                <div class="data-header">
+                    <div>
+                        <div class="data-title">
+                            <i class="fas fa-list me-2"></i>拦截数据列表
+                        </div>
+                        <div class="data-stats">
+                            共找到 <strong>1,234</strong> 条拦截记录，当前显示第 <strong>1-50</strong> 条 | 按创建时间倒序排列
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary btn-sm">
+                            <i class="fas fa-download me-1"></i>导出Excel
+                        </button>
+                        <button type="button" class="btn btn-outline-danger btn-sm">
+                            <i class="fas fa-trash me-1"></i>批量删除
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" class="form-check-input"></th>
+                                <th>序号</th>
+                                <th>店铺</th>
+                                <th>站点</th>
+                                <th>SPU <i class="fas fa-external-link-alt text-muted" style="font-size: 0.7rem;" title="点击可跳转到产品系统"></i></th>
+                                <th>产品标题</th>
+                                <th>系统分类</th>
+                                <th>单品状态</th>
+                                <th>拦截类型</th>
+                                <th>处理状态</th>
+                                <th>创建时间</th>
+                                <th>拦截时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="checkbox" class="form-check-input"></td>
+                                <td>1</td>
+                                <td>Amazon-US-Store001</td>
+                                <td>US</td>
+                                <td><a href="#" class="text-primary text-decoration-none">SPU20250724001</a></td>
+                                <td>Wireless Bluetooth Headphones with Noise Cancelling</td>
+                                <td>电子产品>音响设备>耳机</td>
+                                <td><span class="status-badge status-info">正常</span></td>
+                                <td><span class="status-badge status-danger">关键词中存在品牌词</span></td>
+                                <td><span class="status-badge status-danger">已拦截</span></td>
+                                <td>2025-07-24 10:30:15</td>
+                                <td>2025-07-24 10:35:20</td>
+                                <td>
+                                    <button class="btn btn-outline-danger btn-sm">
+                                        <i class="fas fa-trash"></i> 删除
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="form-check-input"></td>
+                                <td>2</td>
+                                <td>Amazon-UK-Store002</td>
+                                <td>UK</td>
+                                <td><a href="#" class="text-primary text-decoration-none">SPU20250724002</a></td>
+                                <td>Smart Watch Fitness Tracker</td>
+                                <td>电子产品>可穿戴设备>智能手表</td>
+                                <td><span class="status-badge status-warning">缺货</span></td>
+                                <td><span class="status-badge status-warning">图片缺失</span></td>
+                                <td><span class="status-badge status-pending">未拦截</span></td>
+                                <td>2025-07-24 09:45:30</td>
+                                <td>2025-07-24 09:50:12</td>
+                                <td>
+                                    <button class="btn btn-outline-danger btn-sm">
+                                        <i class="fas fa-trash"></i> 删除
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="form-check-input"></td>
+                                <td>3</td>
+                                <td>Amazon-DE-Store003</td>
+                                <td>DE</td>
+                                <td><a href="#" class="text-primary text-decoration-none">SPU20250724003</a></td>
+                                <td>Gaming Mechanical Keyboard RGB</td>
+                                <td>电子产品>电脑外设>键盘</td>
+                                <td><span class="status-badge status-info">正常</span></td>
+                                <td><span class="status-badge status-danger">侵权禁售</span></td>
+                                <td><span class="status-badge status-danger">已拦截</span></td>
+                                <td>2025-07-24 08:20:45</td>
+                                <td>2025-07-24 08:25:33</td>
+                                <td>
+                                    <button class="btn btn-outline-danger btn-sm">
+                                        <i class="fas fa-trash"></i> 删除
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="form-check-input"></td>
+                                <td>4</td>
+                                <td>Amazon-US-Store001</td>
+                                <td>US</td>
+                                <td><a href="#" class="text-primary text-decoration-none">SPU20250724004</a></td>
+                                <td>Portable Phone Charger Power Bank</td>
+                                <td>电子产品>充电设备>充电宝</td>
+                                <td><span class="status-badge status-info">正常</span></td>
+                                <td><span class="status-badge status-info">重复刊登</span></td>
+                                <td><span class="status-badge status-success">无需拦截</span></td>
+                                <td>2025-07-24 07:15:22</td>
+                                <td>2025-07-24 07:20:18</td>
+                                <td>
+                                    <button class="btn btn-outline-danger btn-sm">
+                                        <i class="fas fa-trash"></i> 删除
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="form-check-input"></td>
+                                <td>5</td>
+                                <td>Amazon-UK-Store002</td>
+                                <td>UK</td>
+                                <td><a href="#" class="text-primary text-decoration-none">SPU20250724005</a></td>
+                                <td></td>
+                                <td>家居用品>厨房用品>餐具</td>
+                                <td><span class="status-badge status-info">正常</span></td>
+                                <td><span class="status-badge status-warning">产品标题为空</span></td>
+                                <td><span class="status-badge status-pending">未拦截</span></td>
+                                <td>2025-07-24 06:30:10</td>
+                                <td>2025-07-24 06:35:45</td>
+                                <td>
+                                    <button class="btn btn-outline-danger btn-sm">
+                                        <i class="fas fa-trash"></i> 删除
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 分页控件 -->
+                <nav aria-label="数据分页">
+                    <ul class="pagination">
+                        <li class="page-item disabled">
+                            <span class="page-link">上一页</span>
+                        </li>
+                        <li class="page-item active">
+                            <span class="page-link">1</span>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">2</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">3</a>
+                        </li>
+                        <li class="page-item">
+                            <span class="page-link">...</span>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">25</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">下一页</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 全选功能
+        document.querySelector('thead input[type="checkbox"]').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
+            checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+        });
+
+        // 查询按钮功能
+        document.querySelector('.btn-primary').addEventListener('click', function() {
+            // 这里添加查询逻辑
+            alert('执行查询操作');
+        });
+
+        // 重置按钮功能
+        document.querySelector('.btn-outline-secondary').addEventListener('click', function() {
+            // 这里添加重置逻辑
+            document.querySelector('form').reset();
+        });
+
+        // 导出功能
+        document.querySelector('.btn-group .btn-primary').addEventListener('click', function() {
+            alert('开始导出Excel文件...');
+        });
+
+        // 批量删除功能
+        document.querySelector('.btn-group .btn-outline-danger').addEventListener('click', function() {
+            const checkedBoxes = document.querySelectorAll('tbody input[type="checkbox"]:checked');
+            if (checkedBoxes.length === 0) {
+                alert('请选择要删除的记录');
+                return;
+            }
+            if (confirm(`确定要删除选中的 ${checkedBoxes.length} 条记录吗？`)) {
+                alert('删除操作执行中...');
+            }
+        });
+
+        // 单个删除功能
+        document.querySelectorAll('tbody .btn-outline-danger').forEach(button => {
+            button.addEventListener('click', function() {
+                if (confirm('确定要删除这条记录吗？')) {
+                    alert('删除操作执行中...');
+                }
+            });
+        });
+
+        // SPU链接点击功能
+        document.querySelectorAll('tbody a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const spu = this.textContent;
+                alert(`跳转到产品系统查看SPU: ${spu}`);
+                // 实际实现时这里应该跳转到产品管理系统
+                // window.open(`/product/detail/${spu}`, '_blank');
+            });
+        });
+    </script>
+</body>
+</html> 
